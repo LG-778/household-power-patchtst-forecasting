@@ -1,0 +1,2 @@
+[xgb_base] xgboost/val: eval_origins=4929
+[xgb_base] saved outputs/p5/xgb_base_val_pred.npy n=4929

@@ -1,0 +1,19 @@
+# 数据不入库：原始数据按 data/README.md 自行获取，清洗产物由脚本复现
+data/*.txt
+*.parquet
+*.npy
+
+# 本地留痕件（可由 README §13 脚本复现，见 §14 留痕清单说明）
+training_log.csv
+outputs/p4/ptst_*.log
+
+# 训练框架自动日志
+lightning_logs/
+
+# IDE 与缓存
+.idea/
+__pycache__/
+*.pyc
+
+# 旧项目参照（非本项目产物）
+旧项目参考/

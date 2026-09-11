@@ -1,0 +1,5 @@
+﻿model,n_eval,MAE_pooled,MAE_horizon_mean,RMSE_pooled,sMAPE_pooled,R2_pooled
+persistence,121,0.5373,0.5373,0.694,0.6205,-0.9436
+seasonal_naive,121,0.4505,0.4505,0.6294,0.5226,-0.5988
+ma7_same_hour,121,0.3663,0.3663,0.4844,0.4308,0.0531
+xgboost,73,0.4175,0.4175,0.5314,0.5045,-0.0503

@@ -1,0 +1,8 @@
+编号,论文核心声称（出处）,本项目判定,验证结果与归因,证据文件
+C1,监督 PatchTST 优于此前 Transformer（Informer/Autoformer/FEDformer 等；论文表 2-3）,未验证（范围外）,本项目未实现这些对照模型。归因：GPU 时间盒（6h）优先保证基线组完整、泄漏审查与滚动协议落地；小数据下训练单个 DL 模型的块成本（155s×29）已占预算大头，加模型不经济。,对照模型缺失，不作方向性结论
+C2,长 lookback 受益（论文以 336/512 报告最优）,未验证（范围外）,L=168 由任务定义锁定（过去 7 天→次日全天语义），未做 lookback 消融。,任务定义约束，非论文矛盾
+C3,patching 与 channel independence 缺一不可（论文消融）,部分/不适用,单变量数据通道数=1，CI 无适用性；patching 维度由 OPT-1 部分覆盖（见 C4）。,数据形态决定
+C4,patch 长度影响（16/8 为论文默认配置）,部分复现（方向中性）,"OPT-1 消融（val n=4,593）：24/12 改善 0.0069 kW（1.2%），不改变模型间排序与量级差距，瓶颈在数据规模与漂移而非配置。",outputs/p5/ablation_patch_24_12_val.csv
+C5,DLinear 在 ETT 数据集多次胜 PatchTST（论文表 3）,部分复现,本项目 test：PatchTST 0.4894 vs DLinear 0.5011（差 2.4%），小时级 PatchTST 略胜但日粒度桥接下 DLinear 反超（0.1712 vs 0.1866）——论文『小数据两模型纠缠、DLinear 极具竞争力』的同型现象成立，严格胜负方向未复现；两者均被 XGBoost/ma7 压制。,"test n=4,589；granularity_bridge.csv"
+C6,RevIN 对分布漂移的作用（窗口级归一化+输出还原）,部分复现 + 边界,漂移存在性：P2 按年日均负荷曲线证实 2006→2010 强漂移，RevIN 必要性有数据证据；PatchTST 在漂移 test 段存活（R² 0.145 vs persistence -0.73）。边界补充（B4②）：夜间近零负荷段窗口归一化后有效信号弱，DL 夜间 nMAE 最高（PTST 0.657/DLinear 0.705 vs XGB 0.421）——RevIN 救漂移、救不了近零值弱信号区。,outputs/eda/ 年漂移图；error_attribution.csv
+C7,自监督预训练优势（论文摘要：大数据集上显著）,未复现,原因写明：① 本项目 3.5 万点单变量属小数据场景，论文自身定位该优势在大数据集显著，边际收益预期有限；② GPU 时间盒 6h 已用约 5h（含消融），无预算；③ 自监督需额外预训练阶段+下游微调评估路径，超出时间盒。,decisions.md 时间盒记录

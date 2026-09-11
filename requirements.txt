@@ -1,0 +1,10 @@
+pandas==2.3.3
+numpy==2.3.2
+# torch 需 CUDA 版（GPU 训练）；CPU-only 不影响基线复现，但 DL 脚本会 FATAL 退出
+# 安装命令：pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+torch==2.6.0
+neuralforecast==3.2.2
+xgboost==3.2.0
+scikit-learn==1.9.0
+matplotlib==3.11.1
+pyarrow==25.0.1
