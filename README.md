@@ -55,11 +55,19 @@
 四张必含图（`outputs/eda/`）：
 
 1. **日内双峰**（`p2_1_intraday_profile.png`）：早峰 ≈07:00、晚峰 ≈20:00，凌晨 4 点低谷；峰谷差 76%。
+
+![日内负荷曲线与工作日/周末对比](outputs/eda/p2_1_intraday_profile.png)
 2. **工作日/周末**（同图）：工作日早峰 ≈1.7kW 远高于周末 ≈1.2kW——周末行为模式方差大，是误差归因的伏笔（§8）。
 3. **按年日均负荷曲线**（`p2_2_yearly_drift.png`）：2006 冬 ≈1.9kW → 2008 夏谷 ≈0.35kW，**年际基线漂移明确**。此图即 **RevIN 必要性的数据证据**：分布随时间系统性漂移，全局统计量（全局 scaler）会失效，窗口级归一化（RevIN）有存在理由。
+
+![按年日均负荷漂移曲线](outputs/eda/p2_2_yearly_drift.png)
 4. **gap 分布与分段边界**（`p2_3_gaps_segments.png`）：6 个 >24h 空窗全部保留为分段边界，零越界插补。
 
+![gap 分布与分段边界](outputs/eda/p2_3_gaps_segments.png)
+
 领域常识校验：功率因数中位 **0.993**（0.9~1 区间内），低 PF 集中在 0.1–1kW 中等负荷（感应电机），非数据错误；Sub_metering 三项合计覆盖 GAP 的 **48.8%**，其余为未分项负荷——确认 EDA-only 决策。
+
+![功率因数分布校验](outputs/eda/p2_4_power_factor.png)
 
 ---
 
@@ -121,7 +129,7 @@
 | 输入全局 scaler | 禁用（`scaler_type="identity"`） | §3.1 设计语义 | 归一化走 RevIN，见 §6 |
 | n_heads / encoder_layers / dropout | 16 / 3 / 0.2 | §3.1 | 库默认值与论文一致 |
 | d_model / d_ff | 该实现不可调 | — | 库固定值，已在留痕注明 |
-| batch_size / max_steps | 256（用户上限）/ 2000 | — | 时间盒内收敛，early stop patience 300 |
+| batch_size / max_steps | 256（用户上限）/ 2000 | — | 早停分场景（与 §5 一致）：有验证集块 `early_stop_patience_steps=300`；短训练史块无验证集（val_size=0）时 =0 即**禁用早停**，跑满 max_steps |
 | 直接多输出 | h=24 一次输出，不递归 | §3.1 监督预测设置 | 与旧项目递归法对比见 §9 |
 
 随机种子 42 固定；CUDA 不可用时脚本 **FATAL 退出**（禁止静默回退 CPU）。
@@ -142,7 +150,11 @@
 
 **DL 与 XGBoost 的差距在 Q4 拉到最大（+0.11~0.13）——段内训练历史 ≤8–10 天 + 概念漂移是 DL 落后的主因**；Q3 绝对 MAE 最低纯粹是夏谷负荷水平低（日均 0.705kW）。
 
+![分时期误差对比](outputs/p5/error_by_period.png)
+
 **时段**：夜间绝对 MAE 最低（XGBoost 0.229），但 DL 夜间 **nMAE** 最高（0.66–0.70 vs XGBoost 0.42）——近零值区域相对误差放大，即 §6 RevIN 边界；晚间 18–23（峰值区）绝对误差最高。
+
+![分时段误差曲线](outputs/p5/error_by_hour.png)
 
 **周内**：周末 MAE 显著高于工作日（XGBoost 0.510 vs 0.384）——周末行为模式方差大（§3 伏笔坐实）。
 
@@ -155,6 +167,8 @@
 ### 9.1 horizon vs MAE 双曲线（`outputs/p5/horizon_mae_dual_curve.png`）
 
 实线 = 本项目 test 共同 origins n=4,589 直接多输出（pooled 按 horizon 分组）；灰色虚线 = 旧项目递归多步（**仅首尾锚点 0.3943/0.5761 披露，线性示意**）：
+
+![horizon vs MAE 双曲线](outputs/p5/horizon_mae_dual_curve.png)
 
 | 模型 | h1 | h24 | 涨幅 |
 |---|---|---|---|
