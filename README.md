@@ -208,6 +208,8 @@ PatchTST 小时级模型在日粒度上与旧项目日级模型几乎打平；XG
 
 ## 10. 论文声称 vs 我的数据（`outputs/p5/paper_claims_check.csv`，7 条）
 
+> 论文逐节解读与复现验证详版笔记：[docs/paper_notes.md](docs/paper_notes.md)
+
 | 声称 | 判定 | 一句话结果 |
 |---|---|---|
 | C1 监督 PatchTST 优于此前 Transformer（表 2-3） | 未验证（范围外） | 未实现 Informer/Autoformer 对照；时间盒优先保基线组完整与泄漏审查 |
